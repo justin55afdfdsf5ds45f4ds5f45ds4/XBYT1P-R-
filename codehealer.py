@@ -81,9 +81,31 @@ class CodeHealer:
             use_smart=False
         )
         
-        # Check if fix generation failed
+        # Check if fix generation failed (API error, rate limit, etc.)
         if not fix_result.success:
             print(f"[-] Cheap model failed: {fix_result.message}")
+            
+            # Try to apply learned fix from memory as fallback
+            if similar_fixes:
+                print("[!] Attempting to apply learned fix from memory...")
+                memory_fix = await self.memory.apply_learned_fix(error_report)
+                
+                if memory_fix and memory_fix.fixed_code:
+                    print("[+] Applied fix from memory!")
+                    # Test the memory fix
+                    print("[*] Testing memory fix in sandbox...")
+                    test_result = await self.sandbox.test_fix(
+                        error_report=error_report,
+                        fix_code=memory_fix.fixed_code
+                    )
+                    
+                    if test_result.success:
+                        print("[+] Memory fix works!")
+                        return memory_fix
+                    else:
+                        print(f"[-] Memory fix failed: {test_result.error[:200] if test_result.error else 'Unknown'}")
+            
+            # If memory fallback didn't work, try smart model
             print("[!] Escalating to smart model...")
             fix_result = await self.fix_generator.generate_fix(
                 error_report=error_report,
@@ -93,7 +115,7 @@ class CodeHealer:
             if not fix_result.success:
                 return FixResult(
                     success=False,
-                    message=f"Both models failed. Last error: {fix_result.message}",
+                    message=f"Both models failed and no memory fix available. Last error: {fix_result.message}",
                     error_report=error_report
                 )
         
