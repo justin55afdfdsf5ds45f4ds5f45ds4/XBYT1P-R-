@@ -1,44 +1,69 @@
 #!/usr/bin/env python3
 """
-Global installation script for timealready
+timealready installer
 """
 import os
 import sys
-import shutil
 from pathlib import Path
 
 
-def install():
-    """Install timealready globally"""
-    print("[*] Installing timealready globally...")
+def main():
+    print("="*60)
+    print("timealready - Paste your error, get the fix instantly")
+    print("="*60)
+    print()
     
-    # Install package
-    print("[*] Installing Python package...")
-    os.system(f'"{sys.executable}" -m pip install -e .')
+    # Check Python version
+    if sys.version_info < (3, 8):
+        print("[!] Python 3.8+ required")
+        sys.exit(1)
     
-    # Create config directory in home
-    home_config = Path.home() / ".timealready"
-    home_config.mkdir(exist_ok=True)
+    print("[+] Python version OK")
     
-    # Copy .env.example to home config if .env doesn't exist
-    home_env = home_config / ".env"
-    if not home_env.exists():
-        print(f"[*] Creating config at {home_env}")
-        shutil.copy(".env.example", home_env)
-        print(f"[!] Please edit {home_env} and add your API keys:")
-        print("    - REPLICATE_API_TOKEN")
-        print("    - E2B_API_KEY")
-        print("    - ULTRACONTEXT_API_KEY (REQUIRED - critical for memory and scaling)")
+    # Create config directory
+    config_dir = Path.home() / ".timealready"
+    config_dir.mkdir(exist_ok=True)
+    print(f"[+] Config directory: {config_dir}")
+    
+    # Check for API keys
+    env_file = config_dir / ".env"
+    
+    if not env_file.exists():
+        print()
+        print("="*60)
+        print("API KEYS REQUIRED")
+        print("="*60)
+        print()
+        print("Get free API keys:")
+        print("1. Replicate: https://replicate.com")
+        print("2. UltraContext: https://ultracontext.ai")
+        print()
+        
+        replicate_key = input("Replicate API token (r8_...): ").strip()
+        ultracontext_key = input("UltraContext API key (uc_live_...): ").strip()
+        
+        if not replicate_key or not ultracontext_key:
+            print("[!] Both API keys required")
+            sys.exit(1)
+        
+        # Save to .env
+        with open(env_file, 'w') as f:
+            f.write(f"REPLICATE_API_TOKEN={replicate_key}\n")
+            f.write(f"ULTRACONTEXT_API_KEY={ultracontext_key}\n")
+        
+        print(f"[+] API keys saved to {env_file}")
     else:
-        print(f"[+] Config already exists at {home_env}")
+        print(f"[+] API keys found in {env_file}")
     
-    print("\n[+] Installation complete!")
-    print("\nUsage:")
-    print("  timealready <error_log_file>")
-    print("  timealready error.log")
-    print("  timealready 'Traceback (most recent call last)...'")
-    print(f"\nConfig: {home_env}")
+    print()
+    print("="*60)
+    print("INSTALLATION COMPLETE")
+    print("="*60)
+    print()
+    print("Try it:")
+    print('  timealready "IndexError: list index out of range"')
+    print()
 
 
 if __name__ == "__main__":
-    install()
+    main()

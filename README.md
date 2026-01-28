@@ -1,481 +1,518 @@
-<div align="center">
-  <img src="logo.png" alt="timealready Logo" width="400"/>
-  
-  # timealready
-  
-  **Autonomous Code Debugging Agent with Infinite Memory**
-  
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-  
-  [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Contributing](#contributing)
-  
-</div>
+# timealready
+
+**Stop explaining the same errors to AI. Store fixes once, retrieve instantly forever.**
+
+![timealready](logo.png)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
-## Overview
+## The Problem (That Nobody Talks About)
 
-timealready is an autonomous debugging agent that learns from every error it fixes. Unlike traditional AI agents that forget everything after each run, timealready stores fix strategies in persistent memory (UltraContext), making it exponentially faster and cheaper over time.
+You're coding. You hit an error. You paste it to your AI assistant. It gives you a fix. **Great.**
 
-**Supports:** Python, JavaScript, TypeScript, Java, C#, Go, Rust, PHP, Ruby, and more.
+**Two weeks later:** Same error. You paste it again. AI thinks for 5 seconds. Gives you the same fix. You pay again.
 
-### Key Innovation
+**A month later:** Same fucking error. You paste it AGAIN. AI forgets. You explain context. It suggests 3 solutions. You try them all. 10 minutes gone.
 
-**The Problem:** AI agents suffer from "context rot" - they forget solutions and repeat mistakes, burning through API costs.
+**This happens with:**
+- Replicate API errors ("insufficient credits" when you have credits)
+- OpenAI rate limits (that aren't actually rate limits)
+- AWS permission errors (that worked yesterday)
+- npm dependency conflicts (that you solved last month)
+- Database connection timeouts (that you fixed 10 times)
 
-**The Solution:** timealready combines:
-- **Routing Logic Models (RLMs)** - Cheap model for execution, expensive model only for debugging
-- **Pure Logic Relation Mapping** - Stack traces reveal file dependencies without LLM overhead
-- **Persistent Memory (UltraContext)** - Stores every fix forever, critical for scaling
-- **Sandbox Testing** - E2B validates fixes before deployment
+**You're not stupid. The AI just has amnesia.**
 
-**Result:** 90%+ cost reduction with improving accuracy over time.
+Every conversation is a blank slate. Every error is "new" to it. You're paying to solve the same problems over and over.
 
-**Note:** UltraContext is REQUIRED for production use. It enables memory persistence, RLM scaling, and cross-session learning.
-
----
-
-## Features
-
-### 🧠 Infinite Memory (UltraContext - REQUIRED)
-- Stores every fix permanently
-- 90%+ reuse rate for similar errors
-- Never forgets a solution
-- Critical for RLM scaling and tracing
-- Enables cross-session and team learning
-
-### 💰 Cost Optimized
-- DeepSeek V3 ($0.0002/1M tokens) for execution
-- Claude 4.5 Sonnet ($0.006/1M tokens) only for complex debugging
-- 99%+ savings on repeated errors
-
-### 🗺️ Smart Relation Mapping
-- Parses stack traces to understand file dependencies
-- Pure logic - no LLM needed
-- Accurate call chain analysis
-
-### 🧪 Sandbox Testing
-- Tests every fix in isolated E2B environment
-- Validates before showing results
-- No risk to production code
-
-### 📈 Self-Improving
-- Gets faster with each error
-- Learns patterns across projects
-- Builds institutional knowledge
+**timealready fixes this.**
 
 ---
 
-## Installation
-
-### Prerequisites
-
-- Python 3.9 or higher
-- API keys for:
-  - [Replicate](https://replicate.com/account/api-tokens) (Required)
-  - [E2B](https://e2b.dev/docs) (Required)
-  - [UltraContext](https://ultracontext.ai) (Required - critical for memory and RLM scaling)
-
-### Install
+## What It Does
 
 ```bash
-# Clone repository
+timealready "your error message"
+```
+
+**First time:**
+- Asks AI for the fix
+- Shows you the solution
+- Stores it in UltraContext (cloud memory)
+- Cost: $0.0002, Time: 2 seconds
+
+**Every time after:**
+- Retrieves from memory instantly
+- Shows you the SAME fix that worked before
+- Cost: $0, Time: <1 second
+
+**The more you (and others) use it, the smarter it gets.**
+
+---
+
+## Real Use Cases (Blood & Tears Edition)
+
+### Use Case 1: The Replicate API Nightmare
+
+**The Situation:**
+You're using Replicate API with Kiro/Cursor/any AI IDE. You have credits. But you keep getting:
+
+```
+Error: Insufficient credits. Please add payment method.
+```
+
+You KNOW you have credits. You check the dashboard - $50 remaining. WTF?
+
+**Without timealready:**
+1. Copy error to AI
+2. AI suggests: "Add payment method"
+3. You: "I have credits"
+4. AI: "Try refreshing token"
+5. You regenerate token
+6. Still doesn't work
+7. AI: "Check environment variables"
+8. You check - they're fine
+9. AI: "Maybe use `override=True` in load_dotenv()"
+10. **THAT WORKS**
+11. 15 minutes wasted
+
+**Next week:** Same error. You forgot the solution. Repeat steps 1-11.
+
+**With timealready:**
+
+```bash
+# First time:
+timealready "replicate insufficient credits but i have credits"
+
+# AI gives fix, stores it
+# Shows: "Use load_dotenv(override=True) to prioritize .env over system vars"
+
+# Next time (even 6 months later):
+timealready "replicate insufficient"
+
+# INSTANT: "Use load_dotenv(override=True)..."
+# 0 seconds. $0. Done.
+```
+
+**You never explain this to AI again.**
+
+---
+
+### Use Case 2: The AWS Permission Hell
+
+**The Situation:**
+You're deploying to AWS. Everything worked yesterday. Today:
+
+```
+AccessDenied: User is not authorized to perform: s3:PutObject
+```
+
+You have the permissions. You checked IAM. It's there.
+
+**Without timealready:**
+- Google for 20 minutes
+- Find Stack Overflow from 2019
+- Try 5 different solutions
+- Finally remember: "Oh right, I need to attach the policy to the ROLE, not the USER"
+- Works
+
+**Next month:** Same error. You forgot. Google again.
+
+**With timealready:**
+
+```bash
+# First time:
+timealready "aws s3 access denied but i have permissions"
+
+# Stores: "Attach policy to IAM role, not user. Check role trust relationship."
+
+# Next time:
+timealready "aws s3 access"
+
+# INSTANT fix. No Googling. No Stack Overflow. Done.
+```
+
+---
+
+### Use Case 3: The npm Dependency Conflict
+
+**The Situation:**
+
+```
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR! Found: react@18.2.0
+npm ERR! Could not resolve dependency: peer react@"^17.0.0"
+```
+
+**Without timealready:**
+- Try `npm install --legacy-peer-deps` (doesn't work)
+- Try `npm install --force` (breaks other things)
+- Delete node_modules, reinstall (still broken)
+- Ask AI, it suggests 10 solutions
+- Try them all
+- Finally: `npm install react@17.0.0` works
+- 30 minutes gone
+
+**Next project:** Same error. You forgot which solution worked.
+
+**With timealready:**
+
+```bash
+timealready "npm eresolve react peer dependency"
+
+# INSTANT: "Downgrade to react@17.0.0 or use --legacy-peer-deps"
+# You know which one worked last time
+# 5 seconds. Done.
+```
+
+---
+
+### Use Case 4: The Database Connection Timeout
+
+**The Situation:**
+
+```
+Error: Connection timeout after 30000ms
+```
+
+Your database is running. You can connect with psql. But your app can't.
+
+**Without timealready:**
+- Check connection string (fine)
+- Check firewall (fine)
+- Check database logs (nothing)
+- Ask AI
+- AI: "Increase timeout"
+- You: "That's not the issue"
+- AI: "Check SSL settings"
+- You: "How?"
+- AI: "Add `?sslmode=require`"
+- **THAT WORKS**
+- But you'll forget this
+
+**With timealready:**
+
+```bash
+timealready "postgres connection timeout but database is running"
+
+# Stores: "Add ?sslmode=require to connection string"
+
+# Next time:
+timealready "postgres timeout"
+
+# INSTANT fix. No debugging. Done.
+```
+
+---
+
+### Use Case 5: The "It Worked Yesterday" Bug
+
+**The Situation:**
+Your code worked yesterday. You changed NOTHING. Today it's broken:
+
+```
+ModuleNotFoundError: No module named 'requests'
+```
+
+But `pip list` shows requests is installed.
+
+**Without timealready:**
+- Reinstall requests (doesn't work)
+- Check Python version (same)
+- Check virtual env (active)
+- Ask AI
+- AI suggests 10 things
+- Finally: "You're using the wrong Python interpreter"
+- `which python` shows system Python, not venv
+- Fix: `source venv/bin/activate` again
+- 20 minutes wasted
+
+**With timealready:**
+
+```bash
+timealready "module not found but pip list shows it installed"
+
+# Stores: "Wrong Python interpreter. Check 'which python' matches venv"
+
+# Next time:
+timealready "module not found pip"
+
+# INSTANT: "Check Python interpreter"
+# 2 seconds. Done.
+```
+
+---
+
+## Why This Changes Everything
+
+### For You:
+- **Stop repeating yourself** - Explain errors once, never again
+- **Stop Googling** - Your fixes are in memory, not scattered across Stack Overflow
+- **Stop paying** - $0 for every error you've seen before
+- **Stop waiting** - Instant retrieval vs 5-10 seconds of AI thinking
+
+### For Everyone:
+- **Network effect** - When you solve an error, everyone benefits
+- **Collective memory** - The more people use it, the more fixes are stored
+- **No more duplicate work** - 1000 people don't solve the same error 1000 times
+
+### For the Industry:
+- **Fixes become searchable** - Not buried in chat logs
+- **Fixes become reusable** - Not lost when you start a new conversation
+- **Fixes become shareable** - Not locked in your head
+- **Fixes become permanent** - Not forgotten after 2 weeks
+
+---
+
+## How It Works (Technical)
+
+```
+1. You paste error
+   ↓
+2. Check UltraContext (cloud memory)
+   ↓
+3. Found? → Return instantly ($0)
+   Not found? → Ask AI ($0.0002)
+   ↓
+4. Store in UltraContext
+   ↓
+5. Next person gets it instantly
+```
+
+**Architecture:**
+- `timealready.py` - CLI (100 lines)
+- `core/memory.py` - UltraContext interface (100 lines)
+- `core/llm.py` - Replicate API (50 lines)
+
+**Total: 250 lines. No complexity. No bullshit.**
+
+---
+
+## Install
+
+```bash
+pip install timealready
+```
+
+Or from source:
+
+```bash
 git clone https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready.git
 cd timealready
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### Environment Configuration
-
-```bash
-# .env
-REPLICATE_API_TOKEN=your_replicate_token
-E2B_API_KEY=your_e2b_key
-ULTRACONTEXT_API_KEY=your_ultracontext_key  # REQUIRED for memory and scaling
+pip install -e .
 ```
 
 ---
 
-## Quick Start
+## Setup
 
-### Basic Usage
+Get API keys (free tiers available):
+- [Replicate](https://replicate.com) - For AI ($0.0002 per query)
+- [UltraContext](https://ultracontext.ai) - For memory (free tier: 10k messages/month)
 
 ```bash
-# Fix error from log file
-timealready error.log
-
-# Fix error from clipboard
-timealready "Traceback (most recent call last)..."
-
-# Specify codebase path
-timealready error.log /path/to/project
+export REPLICATE_API_TOKEN="r8_..."
+export ULTRACONTEXT_API_KEY="uc_live_..."
 ```
 
-### Example Session
+Or create `~/.timealready/.env`:
 
 ```bash
-$ timealready test_project/error.log test_project
+REPLICATE_API_TOKEN=r8_...
+ULTRACONTEXT_API_KEY=uc_live_...
+```
 
-[*] Analyzing error...
-[!] Error: IndexError in test_project/utils.py:6
-[*] Mapping file relations...
-[+] Related files: 3
-    -> test_project/api.py:11
-    -> test_project/api.py:7
-    -> test_project/processor.py:6
-[*] Checking memory for similar fixes...
-[*] Generating fix with cheap model...
-[*] Testing fix in sandbox...
-[+] Fix works! Storing in memory...
+Run installer:
+
+```bash
+python install.py
+```
+
+---
+
+## Usage
+
+### Basic:
+
+```bash
+timealready "your error message"
+```
+
+### From file:
+
+```bash
+python script.py 2>&1 | tee error.log
+timealready error.log
+```
+
+### From clipboard:
+
+```bash
+# Copy error, then:
+timealready "$(pbpaste)"  # Mac
+timealready "$(xclip -o)"  # Linux
+```
+
+---
+
+## Examples
+
+### Example 1: First time seeing error
+
+```bash
+$ timealready "KeyError: 'user_id'"
+
+[*] Error: KeyError: 'user_id'...
+[*] Checking memory...
+[*] Not in memory. Asking LLM...
 
 ============================================================
-SUCCESS - FIX GENERATED
+FIX GENERATED ($0.000200)
 ============================================================
 
-File: test_project/utils.py
-Line: 6
+KeyError: 'user_id'
 
-Diff:
-- return data[999]
-+ if len(data) > 999:
-+     return data[999]
-+ return None
+Cause: Accessing dictionary key that doesn't exist
 
-Cost: $0.0002
-Model: deepseek-ai/deepseek-v3
+Fix:
+# Before
+user_id = data['user_id']  # Crashes if key missing
+
+# After
+user_id = data.get('user_id')  # Returns None if missing
+# Or
+if 'user_id' in data:
+    user_id = data['user_id']
+
+Prevention: Always use .get() or check key existence
+
+[+] Stored in memory
 ```
 
----
+### Example 2: Seen before
 
-## Architecture
-
-### System Design
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    timealready                          │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  1. Error Analyzer                                      │
-│     └─> Parse stack trace                              │
-│     └─> Extract error context                          │
-│                                                         │
-│  2. Relation Mapper (Pure Logic)                       │
-│     └─> Map file dependencies from stack trace         │
-│     └─> No LLM needed                                  │
-│                                                         │
-│  3. Memory Manager (UltraContext)                      │
-│     └─> Retrieve similar fixes                         │
-│     └─> 90%+ hit rate                                  │
-│                                                         │
-│  4. Fix Generator (RLM Routing)                        │
-│     └─> Try cheap model first (DeepSeek V3)           │
-│     └─> Escalate to smart model if needed (Claude)    │
-│                                                         │
-│  5. Sandbox Executor (E2B)                             │
-│     └─> Test fix in isolation                          │
-│     └─> Validate before deployment                     │
-│                                                         │
-│  6. Memory Storage                                      │
-│     └─> Store successful fix                           │
-│     └─> Available for future errors                    │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Cost Optimization Strategy
-
-| Attempt | Model | Cost/1M Tokens | When Used |
-|---------|-------|----------------|-----------|
-| 1st | DeepSeek V3 | $0.0002 | Always try first |
-| 2nd | Claude 4.5 Sonnet | $0.006 | If cheap model fails |
-| 3rd+ | Memory Lookup | $0 | If similar error seen before |
-
-### Relation Mapping Logic
-
-Traditional approach: Use LLM to analyze code relationships (expensive, slow)
-
-**timealready approach:** Parse stack trace (free, instant)
-
-```python
-Traceback (most recent call last):
-  File "api.py", line 45, in handle_request
-    result = process_data(user_input)
-  File "processor.py", line 23, in process_data
-    return transform(data)
-  File "utils.py", line 12, in transform
-    return data[999]  # ← ERROR HERE
-IndexError: list index out of range
-```
-
-**Extracted relations:**
-- `api.py:45` calls `processor.py:23`
-- `processor.py:23` calls `utils.py:12`
-- Error occurred in `utils.py:12`
-
-No LLM needed. Pure logic. Always accurate.
-
----
-
-## Documentation
-
-### Project Structure
-
-```
-timealready/
-├── core/
-│   ├── error_analyzer.py      # Stack trace parsing
-│   ├── relation_mapper.py     # Dependency mapping
-│   ├── fix_generator.py       # RLM-based fix generation
-│   ├── sandbox_executor.py    # E2B sandbox testing
-│   └── memory_manager.py      # UltraContext integration
-├── timealready.py             # CLI entry point
-├── models.py                  # Pydantic data models
-├── requirements.txt           # Python dependencies
-├── setup.py                   # Package configuration
-├── LICENSE                    # MIT License
-└── README.md                  # This file
-```
-
-### Core Components
-
-#### Error Analyzer
-Parses Python stack traces into structured data:
-- Error type and message
-- File paths and line numbers
-- Function names and code context
-- Complete call chain
-
-#### Relation Mapper
-Extracts file dependencies from stack trace:
-- No LLM overhead
-- 100% accurate
-- Instant execution
-
-#### Fix Generator
-Routes between cheap and expensive models:
-- DeepSeek V3 for common errors
-- Claude 4.5 Sonnet for complex cases
-- Injects learned fixes from memory
-
-#### Sandbox Executor
-Tests fixes in E2B environment:
-- Isolated execution
-- No risk to production
-- Validates before deployment
-
-#### Memory Manager
-Stores and retrieves fixes:
-- UltraContext for persistence (REQUIRED for production)
-- Enables RLM scaling with fix IDs
-- Semantic similarity matching
-- Cross-session memory
-- Local cache for development only
-
----
-
-## Performance
-
-### Cost Comparison
-
-| Scenario | Traditional (GPT-4 only) | timealready | Savings |
-|----------|--------------------------|-------------|---------|
-| First error | $0.030 | $0.006 | 80% |
-| Same error (2nd time) | $0.030 | $0.0002 | 99.3% |
-| 100 similar errors | $3.00 | $0.020 | 99.3% |
-| 1000 errors over time | $30.00 | $0.15 | 99.5% |
-
-### Speed Comparison
-
-| Scenario | Traditional | timealready |
-|----------|-------------|-------------|
-| First error | 15-30s | 10-20s |
-| Learned error | 15-30s | 2-5s |
-| Batch of 100 | 25-50min | 5-10min |
-
----
-
-## Use Cases
-
-### Development Workflow
 ```bash
-# Hit an error during development
-timealready error.log
+$ timealready "KeyError: 'user_id'"
 
-# Apply the fix
-# Continue coding
-```
+[*] Error: KeyError: 'user_id'...
+[*] Checking memory...
 
-### CI/CD Integration
-```yaml
-# .github/workflows/auto-fix.yml
-name: Auto-fix Errors
+============================================================
+FIX FOUND IN MEMORY (instant, $0)
+============================================================
 
-on: [push, pull_request]
-
-jobs:
-  fix:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run tests and capture errors
-        run: pytest > test_output.log || true
-      - name: Auto-fix errors
-        run: timealready test_output.log
-        env:
-          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_TOKEN }}
-          E2B_API_KEY: ${{ secrets.E2B_KEY }}
-```
-
-### Production Monitoring
-```bash
-# Watch logs and auto-fix
-tail -f /var/log/app.log | timealready --watch
+[Same fix as above, but instant and free]
 ```
 
 ---
 
-## Roadmap
+## Costs
 
-### Current (v1.0)
-- [x] Multi-language support (Python, JS, TS, Java, C#, Go, Rust, PHP, Ruby)
-- [x] Stack trace parsing
-- [x] Relation mapping
-- [x] RLM routing (cheap/smart)
-- [x] E2B sandbox testing
-- [x] UltraContext memory
-- [x] CLI interface
+| Scenario | Cost | Time |
+|----------|------|------|
+| First time (new error) | $0.0002 | ~2 seconds |
+| Seen before (in memory) | $0 | <1 second |
+| AI fallback (if DeepSeek fails) | $0.003 | ~3 seconds |
 
-### Planned (v1.1)
-- [ ] More languages (C++, Swift, Kotlin)
-- [ ] IDE plugins (VSCode, JetBrains)
-- [ ] GitHub Action
-- [ ] Web dashboard
-- [ ] Team collaboration features
+**Example:**
+- 1000 unique errors = $0.20
+- After that, all free forever
+- If 10 people use it: $0.02 per person
+- If 100 people use it: $0.002 per person
 
-### Future (v2.0)
-- [ ] Real-time monitoring integration
-- [ ] Automatic PR creation
-- [ ] Learning analytics dashboard
-- [ ] Custom model fine-tuning
-- [ ] Enterprise features
+**The more people use it, the cheaper it gets.**
+
+---
+
+## Why This Will Hit 50k Stars
+
+1. **Solves a real problem** - AI amnesia affects everyone
+2. **Simple** - One command, one purpose
+3. **Fast** - Instant retrieval
+4. **Cheap** - Pennies for thousands of fixes
+5. **Viral** - "Holy shit it remembered my error from last month"
+6. **Network effect** - More users = more fixes = better for everyone
+7. **No lock-in** - Your fixes are in UltraContext, not proprietary storage
+
+---
+
+## Comparison
+
+| Solution | Cost per error | Remembers? | Instant? | Shared? |
+|----------|---------------|------------|----------|---------|
+| Google + Stack Overflow | Free | No | No | Yes (if you find it) |
+| AI (ChatGPT/Claude) | $0.01-0.05 | No | No | No |
+| AI with RAG | $0.01-0.05 | Sometimes | No | No |
+| **timealready** | **$0.0002 first time, $0 after** | **Yes** | **Yes** | **Yes** |
 
 ---
 
 ## Contributing
 
-We welcome contributions! Here's how to get started:
+PRs welcome! Keep it simple.
 
-### Development Setup
+**Guidelines:**
+- No complexity
+- No frameworks
+- No over-engineering
+- If it adds >50 lines, it better be worth it
 
-```bash
-# Fork and clone
-git clone https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready.git
-cd timealready
+---
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+## Roadmap
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Run tests
-pytest
-```
-
-### Contribution Guidelines
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### Code Style
-
-- Follow PEP 8
-- Add type hints
-- Write docstrings
-- Include tests
+- [ ] Web interface to browse fixes
+- [ ] Team sharing (share fixes with your team only)
+- [ ] Fix ratings (upvote/downvote fixes)
+- [ ] Language-specific fixes (Python, JS, Go, etc.)
+- [ ] IDE plugins (VSCode, Cursor, etc.)
 
 ---
 
 ## FAQ
 
-**Q: Does it work with languages other than Python?**  
-A: Yes! v1.0 supports Python, JavaScript, TypeScript, Java, C#, Go, Rust, PHP, and Ruby. More languages coming in v1.1.
+**Q: Is my data private?**
+A: Fixes are stored in UltraContext. They're associated with your API key. You can delete them anytime.
 
-**Q: Is it safe to use in production?**  
-A: Yes. All fixes are tested in isolated E2B sandboxes. You review diffs before applying.
+**Q: What if I don't want to share fixes?**
+A: Use a private UltraContext context (coming soon).
 
-**Q: How much does it cost to run?**  
-A: First fix: ~$0.006. Repeated errors: ~$0.0002. Costs decrease over time as memory grows.
+**Q: What if the fix is wrong?**
+A: You can edit/delete fixes in UltraContext dashboard.
 
-**Q: Do I need UltraContext?**  
-A: Yes, absolutely. UltraContext is critical for memory persistence, RLM scaling, and tracing fixes across sessions. Without it, the system cannot scale or maintain long-term memory.
+**Q: Does it work offline?**
+A: No, it needs internet to access UltraContext and Replicate.
 
-**Q: Can it automatically commit fixes?**  
-A: No. It shows you the diff. You decide whether to apply it. Safety first.
-
-**Q: How does it compare to GitHub Copilot?**  
-A: Copilot suggests code. timealready fixes errors autonomously and learns from them.
+**Q: Can I use my own LLM?**
+A: Yes, edit `core/llm.py` to use any LLM API.
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT
 
 ---
 
-## Powered By
+## Credits
 
-<div align="center">
-  
-  **[Replicate](https://replicate.com)** • **[E2B](https://e2b.dev)** • **[UltraContext](https://ultracontext.ai)**
-  
-</div>
-
----
-
-## Citation
-
-If you use timealready in your research or project, please cite:
-
-```bibtex
-@software{timealready2026,
-  title = {timealready: Autonomous Code Debugging with Infinite Memory},
-  author = {timealready Team},
-  year = {2026},
-  url = {https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready}
-}
-```
+Built with:
+- [Replicate](https://replicate.com) - AI inference
+- [UltraContext](https://ultracontext.ai) - Memory storage
+- [DeepSeek V3](https://replicate.com/deepseek-ai/deepseek-v3) - Fast, cheap AI
+- [Claude 3.5 Sonnet](https://replicate.com/anthropic/claude-3.5-sonnet) - Smart fallback
 
 ---
 
-## Support
+**Stop explaining. Start remembering.**
 
-- **Issues:** [GitHub Issues](https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready/discussions)
-- **Email:** justinlord@empusaai.com
+**Stop Googling. Start retrieving.**
+
+**Stop paying. Start reusing.**
 
 ---
 
-<div align="center">
-  
-  **Built by developers, for developers.**
-  
-  Stop debugging the same errors. Start learning from them.
-  
-  ⭐ Star this repo if you believe AI agents should get smarter, not dumber.
-  
-</div>
+*Built by developers, for developers, because we're tired of explaining the same shit to AI over and over.*

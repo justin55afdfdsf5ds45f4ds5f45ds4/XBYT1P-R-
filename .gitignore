@@ -37,9 +37,6 @@ ENV/
 .env
 .env.local
 
-# UltraContext cache
-.ultracontext_cache/
-
 # Logs
 *.log
 logs/
@@ -52,6 +49,3 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
-
-# timealready specific
-test_project/
