@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-XBYT1P&%R$@ - Autonomous Code Debugging Agent
+timealready - Autonomous Code Debugging Agent
 Fixes bugs by analyzing stack traces, understanding file relations, and testing in sandbox.
 """
 import asyncio
@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 # Load .env from current directory first, then from home directory
 # Use override=True to prioritize .env file over system environment variables
 load_dotenv(override=True)
-home_env = Path.home() / ".xbyt1p" / ".env"
+home_env = Path.home() / ".timealready" / ".env"
 if home_env.exists():
     load_dotenv(home_env, override=True)
 
@@ -180,11 +180,11 @@ class CodeHealer:
 async def main():
     """CLI entry point"""
     if len(sys.argv) < 2:
-        print("Usage: xbyt1p <error_log_or_file> [codebase_path]")
+        print("Usage: timealready <error_log_or_file> [codebase_path]")
         print("\nExamples:")
-        print("  xbyt1p error.log")
-        print("  xbyt1p 'Traceback (most recent call last)...'")
-        print("  xbyt1p error.log /path/to/project")
+        print("  timealready error.log")
+        print("  timealready 'Traceback (most recent call last)...'")
+        print("  timealready error.log /path/to/project")
         sys.exit(1)
     
     error_input = sys.argv[1]

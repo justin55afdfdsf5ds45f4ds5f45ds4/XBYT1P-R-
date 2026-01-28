@@ -1,4 +1,4 @@
-"""Setup configuration for XBYT1P&%R$@"""
+"""Setup configuration for timealready"""
 from setuptools import setup, find_packages
 from pathlib import Path
 
@@ -6,14 +6,14 @@ from pathlib import Path
 readme = Path("README.md").read_text(encoding="utf-8")
 
 setup(
-    name="xbyt1p",
+    name="timealready",
     version="1.0.0",
-    author="XBYT1P Team",
-    author_email="hello@xbyt1p.dev",
+    author="timealready Team",
+    author_email="hello@timealready.dev",
     description="AI agent that learns from mistakes and fixes bugs autonomously",
     long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/xbyt1p",
+    url="https://github.com/yourusername/timealready",
     packages=find_packages(exclude=["tests", "test_project"]),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -36,7 +36,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "xbyt1p=xbyt1p:cli_entry",
+            "timealready=xbyt1p:cli_entry",
         ],
     },
     keywords=[

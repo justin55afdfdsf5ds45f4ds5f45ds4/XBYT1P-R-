@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Global installation script for XBYT1P&%R$@
+Global installation script for timealready
 """
 import os
 import sys
@@ -9,15 +9,15 @@ from pathlib import Path
 
 
 def install():
-    """Install XBYT1P globally"""
-    print("[*] Installing XBYT1P&%R$@ globally...")
+    """Install timealready globally"""
+    print("[*] Installing timealready globally...")
     
     # Install package
     print("[*] Installing Python package...")
     os.system(f'"{sys.executable}" -m pip install -e .')
     
     # Create config directory in home
-    home_config = Path.home() / ".xbyt1p"
+    home_config = Path.home() / ".timealready"
     home_config.mkdir(exist_ok=True)
     
     # Copy .env.example to home config if .env doesn't exist
@@ -34,9 +34,9 @@ def install():
     
     print("\n[+] Installation complete!")
     print("\nUsage:")
-    print("  xbyt1p <error_log_file>")
-    print("  xbyt1p error.log")
-    print("  xbyt1p 'Traceback (most recent call last)...'")
+    print("  timealready <error_log_file>")
+    print("  timealready error.log")
+    print("  timealready 'Traceback (most recent call last)...'")
     print(f"\nConfig: {home_env}")
 
 
