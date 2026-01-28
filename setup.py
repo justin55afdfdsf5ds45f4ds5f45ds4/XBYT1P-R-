@@ -13,7 +13,7 @@ setup(
     description="AI agent that learns from mistakes and fixes bugs autonomously",
     long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/timealready",
+    url="https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready",
     packages=find_packages(exclude=["tests", "test_project"]),
     classifiers=[
         "Development Status :: 4 - Beta",

@@ -82,7 +82,7 @@ timealready is an autonomous debugging agent that learns from every error it fix
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/timealready.git
+git clone https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready.git
 cd timealready
 
 # Install dependencies
@@ -456,7 +456,7 @@ If you use timealready in your research or project, please cite:
   title = {timealready: Autonomous Code Debugging with Infinite Memory},
   author = {timealready Team},
   year = {2026},
-  url = {https://github.com/yourusername/timealready}
+  url = {https://github.com/justin55afdfdsf5ds45f4ds5f45ds4/timealready}
 }
 ```
 
