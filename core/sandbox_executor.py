@@ -11,11 +11,14 @@ class SandboxExecutor:
     """Executes code in E2B sandbox"""
     
     def __init__(self):
-        self.api_key = os.getenv("E2B_API_TOKEN")
-        if not self.api_key:
-            raise ValueError("E2B_API_TOKEN not found in environment")
+        api_key = os.getenv("E2B_API_KEY")
+        if not api_key:
+            # Try alternate name
+            api_key = os.getenv("E2B_API_TOKEN")
+        if not api_key:
+            raise ValueError("E2B_API_KEY not found in environment")
         # Set API key in environment for E2B
-        os.environ["E2B_API_KEY"] = self.api_key
+        os.environ["E2B_API_KEY"] = api_key
     
     async def test_fix(self, error_report: ErrorReport, fix_code: str) -> TestResult:
         """

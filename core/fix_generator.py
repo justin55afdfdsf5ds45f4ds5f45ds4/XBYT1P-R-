@@ -13,7 +13,11 @@ class FixGenerator:
     def __init__(self):
         self.cheap_model = "deepseek-ai/deepseek-v3"
         self.smart_model = "anthropic/claude-4.5-sonnet"
-        self.api_token = os.getenv("REPLICATE_API_TOKEN")
+        # Set API token from environment
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            raise ValueError("REPLICATE_API_TOKEN not found in environment")
+        os.environ["REPLICATE_API_TOKEN"] = api_token
     
     async def generate_fix(
         self,

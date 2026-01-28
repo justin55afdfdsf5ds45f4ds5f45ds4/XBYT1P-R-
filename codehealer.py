@@ -9,7 +9,11 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load .env from current directory first, then from home directory
 load_dotenv()
+home_env = Path.home() / ".xbyt1p" / ".env"
+if home_env.exists():
+    load_dotenv(home_env)
 
 from core.error_analyzer import ErrorAnalyzer
 from core.relation_mapper import RelationMapper
@@ -130,10 +134,11 @@ class CodeHealer:
 async def main():
     """CLI entry point"""
     if len(sys.argv) < 2:
-        print("Usage: python codehealer.py <error_log_or_file>")
+        print("Usage: xbyt1p <error_log_or_file> [codebase_path]")
         print("\nExamples:")
-        print("  python codehealer.py error.log")
-        print("  python codehealer.py 'Traceback (most recent call last)...'")
+        print("  xbyt1p error.log")
+        print("  xbyt1p 'Traceback (most recent call last)...'")
+        print("  xbyt1p error.log /path/to/project")
         sys.exit(1)
     
     error_input = sys.argv[1]
@@ -165,5 +170,10 @@ async def main():
         sys.exit(1)
 
 
-if __name__ == "__main__":
+def cli_entry():
+    """Synchronous entry point for console script"""
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    cli_entry()
