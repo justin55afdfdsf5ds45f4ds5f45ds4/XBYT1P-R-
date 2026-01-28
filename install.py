@@ -28,7 +28,7 @@ def install():
         print(f"[!] Please edit {home_env} and add your API keys:")
         print("    - REPLICATE_API_TOKEN")
         print("    - E2B_API_KEY")
-        print("    - ULTRACONTEXT_API_KEY (optional)")
+        print("    - ULTRACONTEXT_API_KEY (REQUIRED - critical for memory and scaling)")
     else:
         print(f"[+] Config already exists at {home_env}")
     

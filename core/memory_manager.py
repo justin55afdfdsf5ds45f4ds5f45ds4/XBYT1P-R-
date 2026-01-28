@@ -14,7 +14,13 @@ class MemoryManager:
     
     def __init__(self):
         self.api_key = os.getenv("ULTRACONTEXT_API_KEY")
-        # Local storage as fallback
+        if not self.api_key:
+            print("[!] WARNING: ULTRACONTEXT_API_KEY not found!")
+            print("[!] UltraContext is REQUIRED for memory persistence and RLM scaling.")
+            print("[!] Get your key at: https://ultracontext.ai")
+            print("[!] System will use local storage (limited functionality)")
+        
+        # Local storage as fallback (limited functionality)
         self.local_storage = {}
         
         # Try to initialize UltraContext
@@ -24,7 +30,8 @@ class MemoryManager:
                 # TODO: Initialize UltraContext SDK when available
                 # For now, use local storage with persistence
                 self.use_ultracontext = False
-                print("[*] UltraContext: Using local storage (SDK not integrated yet)")
+                print("[*] UltraContext: Using local storage (SDK integration pending)")
+                print("[!] For production use, UltraContext API is REQUIRED")
             except Exception as e:
                 print(f"[!] UltraContext init failed: {e}")
     

@@ -28,19 +28,23 @@ timealready is an autonomous debugging agent that learns from every error it fix
 **The Solution:** timealready combines:
 - **Routing Logic Models (RLMs)** - Cheap model for execution, expensive model only for debugging
 - **Pure Logic Relation Mapping** - Stack traces reveal file dependencies without LLM overhead
-- **Persistent Memory** - UltraContext stores every fix forever
+- **Persistent Memory (UltraContext)** - Stores every fix forever, critical for scaling
 - **Sandbox Testing** - E2B validates fixes before deployment
 
 **Result:** 90%+ cost reduction with improving accuracy over time.
+
+**Note:** UltraContext is REQUIRED for production use. It enables memory persistence, RLM scaling, and cross-session learning.
 
 ---
 
 ## Features
 
-### 🧠 Infinite Memory
-- Stores every fix in UltraContext
+### 🧠 Infinite Memory (UltraContext - REQUIRED)
+- Stores every fix permanently
 - 90%+ reuse rate for similar errors
 - Never forgets a solution
+- Critical for RLM scaling and tracing
+- Enables cross-session and team learning
 
 ### 💰 Cost Optimized
 - DeepSeek V3 ($0.0002/1M tokens) for execution
@@ -72,7 +76,7 @@ timealready is an autonomous debugging agent that learns from every error it fix
 - API keys for:
   - [Replicate](https://replicate.com/account/api-tokens) (Required)
   - [E2B](https://e2b.dev/docs) (Required)
-  - [UltraContext](https://ultracontext.ai) (Optional - falls back to local storage)
+  - [UltraContext](https://ultracontext.ai) (Required - critical for memory and RLM scaling)
 
 ### Install
 
@@ -95,7 +99,7 @@ cp .env.example .env
 # .env
 REPLICATE_API_TOKEN=your_replicate_token
 E2B_API_KEY=your_e2b_key
-ULTRACONTEXT_API_KEY=your_ultracontext_key  # Optional
+ULTRACONTEXT_API_KEY=your_ultracontext_key  # REQUIRED for memory and scaling
 ```
 
 ---
@@ -270,9 +274,11 @@ Tests fixes in E2B environment:
 
 #### Memory Manager
 Stores and retrieves fixes:
-- UltraContext for persistence
-- Local cache fallback
+- UltraContext for persistence (REQUIRED for production)
+- Enables RLM scaling with fix IDs
 - Semantic similarity matching
+- Cross-session memory
+- Local cache for development only
 
 ---
 
@@ -415,7 +421,7 @@ A: Yes. All fixes are tested in isolated E2B sandboxes. You review diffs before 
 A: First fix: ~$0.006. Repeated errors: ~$0.0002. Costs decrease over time as memory grows.
 
 **Q: Do I need UltraContext?**  
-A: No. It falls back to local storage. UltraContext provides persistence across sessions and machines.
+A: Yes, absolutely. UltraContext is critical for memory persistence, RLM scaling, and tracing fixes across sessions. Without it, the system cannot scale or maintain long-term memory.
 
 **Q: Can it automatically commit fixes?**  
 A: No. It shows you the diff. You decide whether to apply it. Safety first.

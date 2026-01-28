@@ -32,8 +32,8 @@ Required keys:
 - `REPLICATE_API_TOKEN` - Get at https://replicate.com/account/api-tokens
 - `E2B_API_KEY` - Get at https://e2b.dev/docs
 
-Optional:
-- `ULTRACONTEXT_API_KEY` - Get at https://ultracontext.ai (falls back to local storage)
+**CRITICAL:**
+- `ULTRACONTEXT_API_KEY` - Get at https://ultracontext.ai (REQUIRED for memory and RLM scaling)
 
 ## Usage
 
