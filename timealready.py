@@ -41,15 +41,41 @@ class CodeHealer:
     async def heal(self, error_input: str) -> FixResult:
         """
         Main healing flow:
-        1. Analyze error (parse stack trace)
-        2. Map file relations (what depends on what)
-        3. Check memory for similar fixes
-        4. Generate fix with cheap model + memory
-        5. Test in sandbox
-        6. If fails, escalate to smart model
-        7. Store successful fix in memory
+        1. Parse error message (minimal - just error type and message)
+        2. Check UltraContext memory FIRST (no file scanning)
+        3. If found in memory → Apply fix directly
+        4. If NOT in memory → Then analyze files and generate fix
         """
-        print("[*] Analyzing error...")
+        print("[*] Analyzing error message...")
+        
+        # Try to extract just error type and message (no file parsing yet)
+        error_type, error_message = self._extract_error_basics(error_input)
+        
+        if error_type:
+            print(f"[!] Error: {error_type}")
+            print(f"    Message: {error_message[:100]}...")
+            
+            # Check memory FIRST before touching any files
+            print("[*] Checking UltraContext for known fixes...")
+            memory_fix = await self.memory.retrieve_by_error_type(error_type, error_message)
+            
+            if memory_fix:
+                print(f"[+] Found fix in memory! (used {memory_fix.success_count} times before)")
+                print(f"    Strategy: {memory_fix.fix_strategy}")
+                print(f"    Cost: $0 (from memory)")
+                
+                return FixResult(
+                    success=True,
+                    message=f"Fix retrieved from memory: {memory_fix.fix_strategy}",
+                    fixed_code=memory_fix.fixed_code,
+                    diff=memory_fix.fix_strategy,
+                    cost=0.0,
+                    model_used="memory",
+                    fix_strategy=memory_fix.fix_strategy
+                )
+        
+        # Memory didn't have it - now do full analysis
+        print("[*] Not found in memory. Analyzing full stack trace...")
         error_report = self.error_analyzer.parse(error_input, self.codebase_path)
         
         if not error_report:
@@ -66,7 +92,7 @@ class CodeHealer:
         for rel in relations[:3]:
             print(f"    -> {rel.file}:{rel.line}")
         
-        # Check memory for similar fixes
+        # Check memory for similar fixes (more detailed check)
         print("[*] Checking memory for similar fixes...")
         similar_fixes = await self.memory.retrieve_similar(error_report)
         
@@ -175,6 +201,34 @@ class CodeHealer:
                 message=f"Could not generate working fix. Last error: {test_result.error}",
                 error_report=error_report
             )
+    
+    def _extract_error_basics(self, error_text: str) -> tuple:
+        """Extract just error type and message without full parsing"""
+        import re
+        lines = error_text.strip().split('\n')
+        
+        # Look for error patterns
+        for line in lines:
+            # Match: ErrorType: message
+            match = re.match(r'(\w+(?:Error|Exception)):\s*(.+)', line)
+            if match:
+                return match.group(1), match.group(2)
+            
+            # Match: title: ErrorType
+            if 'title:' in line.lower():
+                parts = line.split(':', 1)
+                if len(parts) > 1:
+                    error_type = parts[1].strip()
+                    # Get detail from next lines
+                    idx = lines.index(line)
+                    message = ""
+                    for next_line in lines[idx+1:idx+3]:
+                        if 'detail:' in next_line.lower():
+                            message = next_line.split(':', 1)[1].strip()
+                            break
+                    return error_type, message
+        
+        return None, None
 
 
 async def main():

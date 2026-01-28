@@ -35,6 +35,24 @@ class MemoryManager:
             except Exception as e:
                 print(f"[!] UltraContext init failed: {e}")
     
+    async def retrieve_by_error_type(self, error_type: str, error_message: str) -> Optional[LearnedFix]:
+        """
+        Retrieve fix by just error type and message (no file info needed).
+        This is the FIRST check - before any file scanning.
+        """
+        # Search by error type
+        matches = []
+        for key, fix in self.local_storage.items():
+            if fix.error_type == error_type:
+                matches.append(fix)
+        
+        if matches:
+            # Return the most successful one
+            matches.sort(key=lambda f: f.success_count, reverse=True)
+            return matches[0]
+        
+        return None
+    
     async def retrieve_similar(self, error_report: ErrorReport) -> List[LearnedFix]:
         """
         Retrieve similar fixes from memory.
@@ -111,6 +129,9 @@ class MemoryManager:
         """Store successful fix in memory with the actual code"""
         signature = self._generate_signature(error_report)
         
+        # Create fix strategy that includes error details for better matching
+        fix_strategy = fix_result.fix_strategy or f"Fixed {error_report.error_type}: {error_report.error_message}"
+        
         # Check if we already have this fix
         if signature in self.local_storage:
             # Increment success count
@@ -126,7 +147,7 @@ class MemoryManager:
                 error_signature=signature,
                 error_type=error_report.error_type,
                 file_pattern=self._extract_pattern(error_report.file_path),
-                fix_strategy=fix_result.fix_strategy or f"Fixed {error_report.error_type}",
+                fix_strategy=fix_strategy,
                 fixed_code=fix_result.fixed_code,  # Store actual fix
                 success_count=1,
                 created_at=datetime.utcnow()
