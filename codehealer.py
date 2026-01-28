@@ -10,10 +10,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load .env from current directory first, then from home directory
-load_dotenv()
+# Use override=True to prioritize .env file over system environment variables
+load_dotenv(override=True)
 home_env = Path.home() / ".xbyt1p" / ".env"
 if home_env.exists():
-    load_dotenv(home_env)
+    load_dotenv(home_env, override=True)
 
 from core.error_analyzer import ErrorAnalyzer
 from core.relation_mapper import RelationMapper

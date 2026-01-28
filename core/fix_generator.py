@@ -13,11 +13,12 @@ class FixGenerator:
     def __init__(self):
         self.cheap_model = "deepseek-ai/deepseek-v3"
         self.smart_model = "anthropic/claude-4.5-sonnet"
-        # Set API token from environment
+        # Get API token from environment
         api_token = os.getenv("REPLICATE_API_TOKEN")
         if not api_token:
             raise ValueError("REPLICATE_API_TOKEN not found in environment")
-        os.environ["REPLICATE_API_TOKEN"] = api_token
+        # Create Replicate client with token
+        self.client = replicate.Client(api_token=api_token)
     
     async def generate_fix(
         self,
@@ -39,9 +40,9 @@ class FixGenerator:
         prompt = self._build_fix_prompt(error_report, learned_fixes)
         
         try:
-            # Call model
+            # Call model using client
             if use_smart:
-                output = replicate.run(
+                output = self.client.run(
                     model,
                     input={
                         "prompt": prompt,
@@ -50,7 +51,7 @@ class FixGenerator:
                     }
                 )
             else:
-                output = replicate.run(
+                output = self.client.run(
                     model,
                     input={
                         "prompt": prompt,
